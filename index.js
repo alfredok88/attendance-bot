@@ -16,10 +16,11 @@ const app = new App({
 
 // 3️⃣ Messages for each keyword
 const ACTIONS = {
-  start: "started their shift",
-  break: "is taking a break",
-  lunch: "is on lunch",
-  end:   "ended their shift"
+  start: "started their shift 🏁",
+  break: "is taking a break 🍎",
+  lunch: "is on lunch 🍱",
+  end:   "ended their shift 🚶‍♂️", 
+  back:   "is back from lunch/break 🔙"
 };
 
 // 4️⃣ Slash-command handler
