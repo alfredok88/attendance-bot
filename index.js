@@ -86,7 +86,7 @@ app.command("/shift", async ({ command, ack, client }) => {
     await client.chat.postEphemeral({
       channel: command.channel_id,
       user: command.user_id,
-      text: "❗ Usage: `/shift start|break|lunch|end`"
+      text: "❗ Usage: `/shift start|break|lunch|back|end`"
     });
     return;
   }
