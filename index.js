@@ -21,7 +21,7 @@ const ACTIONS = {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:arrow_forward: <@${userId}> *started their shift* at <!date^${ts}^{time} ({date_short})|now>.`
+          text: `:sun_with_face: <@${userId}> *started their shift* at <!date^${ts}^{time} ({date_short})|now>.`
         }
       }
     ]
@@ -51,19 +51,30 @@ const ACTIONS = {
     ]
   }),
 
+  back: (userId, ts) => ({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `:computer: <@${userId}> *is back* at <!date^${ts}^{time} ({date_short})|now>.`
+        }
+      }
+    ]
+  }),
+
   end: (userId, ts) => ({
     blocks: [
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:stop_button: <@${userId}> *ended their shift* at <!date^${ts}^{time} ({date_short})|now>.`
+          text: `:crescent_moon: <@${userId}> *ended their shift* at <!date^${ts}^{time} ({date_short})|now>.`
         }
       }
     ]
   })
 };
-
 
 app.command("/shift", async ({ command, ack, client }) => {
   await ack();
