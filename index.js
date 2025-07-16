@@ -14,28 +14,78 @@ const app = new App({
   receiver               // <-- plugs the custom receiver in
 });
 
-// 3️⃣ Messages for each keyword
 const ACTIONS = {
-  start: "started their shift 🏁",
-  break: "is taking a break 🍎",
-  lunch: "is on lunch 🍱",
-  end:   "ended their shift 🚶‍♂️", 
-  back:   "is back from lunch/break 🔙"
+  start: (userId, ts) => ({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `:arrow_forward: <@${userId}> *started their shift* at <!date^${ts}^{time} ({date_short})|now>.`
+        }
+      }
+    ]
+  }),
+
+  break: (userId, ts) => ({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `:coffee: <@${userId}> *is taking a break* as of <!date^${ts}^{time} ({date_short})|now>.`
+        }
+      }
+    ]
+  }),
+
+  lunch: (userId, ts) => ({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `:sandwich: <@${userId}> *is on lunch* starting at <!date^${ts}^{time} ({date_short})|now>.`
+        }
+      }
+    ]
+  }),
+
+  end: (userId, ts) => ({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `:stop_button: <@${userId}> *ended their shift* at <!date^${ts}^{time} ({date_short})|now>.`
+        }
+      }
+    ]
+  })
 };
 
-// 4️⃣ Slash-command handler
-app.command("/shift", async ({ command, ack, respond }) => {
+
+app.command("/shift", async ({ command, ack, client }) => {
   await ack();
   const keyword = (command.text || "").trim().toLowerCase();
-  const phrase  = ACTIONS[keyword];
-  if (!phrase) {
-    await respond("❗ Usage: `/shift start|break|lunch|end`");
+  const ts = Math.floor(Date.now() / 1000);
+  const message = ACTIONS[keyword]?.(command.user_id, ts);
+
+  if (!message) {
+    await client.chat.postEphemeral({
+      channel: command.channel_id,
+      user: command.user_id,
+      text: "❗ Usage: `/shift start|break|lunch|end`"
+    });
     return;
   }
-  await respond(
-    `<@${command.user_id}> ${phrase} at <!date^${Math.floor(Date.now()/1000)}^{time} ({date_short})|now>.`
-  );
+
+  await client.chat.postMessage({
+    channel: command.channel_id,
+    ...message
+  });
 });
+
 
 // 5️⃣ Start web server
 (async () => {
